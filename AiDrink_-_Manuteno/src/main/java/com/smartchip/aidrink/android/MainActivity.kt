@@ -19,6 +19,7 @@ import com.smartchip.aidrink.android.mqtt.MqttViewModel
 import com.smartchip.aidrink.android.qrcode.QrScannerScreen
 import com.smartchip.aidrink.android.ui.HomeScreen
 import com.smartchip.aidrink.android.ui.navigation.BottomBar
+import com.smartchip.aidrink.android.ui.navigation.MqttMessagesScreen
 
 @Composable
 fun MainApp(viewModel: MqttViewModel) {
@@ -52,7 +53,10 @@ fun MainApp(viewModel: MqttViewModel) {
                 }
 
                 composable("home3") {
-                    // Exemplo de nova tela
+                    MqttMessagesScreen(
+                        viewModel = viewModel,
+                        navController = navController
+                    )
                 }
 
                 composable("scanner") {

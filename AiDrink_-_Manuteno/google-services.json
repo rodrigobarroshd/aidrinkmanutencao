@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "321218794326",
+    "project_id": "aidrink-manutencao",
+    "storage_bucket": "aidrink-manutencao.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:321218794326:android:cda3554fae530964f9bcf7",
+        "android_client_info": {
+          "package_name": "com.smartchip.aidrink.android"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBjyg11fXrgmYMRvHr9R_3vSkG3JOkP-No"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

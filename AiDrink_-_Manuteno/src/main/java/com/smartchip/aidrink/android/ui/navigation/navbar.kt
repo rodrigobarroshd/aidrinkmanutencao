@@ -1,5 +1,6 @@
 package com.smartchip.aidrink.android.ui.navigation
 
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarDefaults
@@ -20,6 +21,9 @@ import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 
@@ -28,9 +32,9 @@ fun BottomBar(
     navController: NavHostController
 ) {
     val items = listOf(
-        BottomNavItem.Home,
-        BottomNavItem.Favorites,
-        BottomNavItem.Star
+        BottomNavItem.Config,
+        BottomNavItem.Serve,
+        BottomNavItem.Message
     )
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -52,9 +56,11 @@ fun BottomBar(
                     }
                 },
                 icon = {
+                    val iconId = if (currentRoute == item.route) item.selectedIcon else item.unselectedIcon
                     Icon(
-                        imageVector = if (selected) item.selectedIcon else item.unselectedIcon,
-                        contentDescription = item.label
+                        painter = painterResource(id = iconId), // Usa painterResource para Drawables
+                        contentDescription = item.label,
+                        modifier = Modifier.size(24.dp) // Ajuste o tamanho conforme necessário
                     )
                 },
                 label = { Text(item.label) }

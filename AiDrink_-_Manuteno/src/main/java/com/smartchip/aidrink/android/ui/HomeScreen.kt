@@ -1,10 +1,12 @@
 package com.smartchip.aidrink.android.ui
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -15,6 +17,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -46,14 +49,14 @@ fun HomeScreen(viewModel: MqttViewModel, navController: NavController) {
     val scrollState = rememberScrollState()
     val topic = viewModel.currentTopic
     val lastMessage = viewModel.lastMessage
-
+    var showEditModal by remember { mutableStateOf(false) }
+    var editTopicInput by remember { mutableStateOf("") }
     Box(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
-
-        // 🔝 BOTÃO ICON EXPRESSIVE NO CANTO SUPERIOR DIREITO
+        // 🔝 CABEÇALHO
         if (topic != null) {
             Row(
                 modifier = Modifier
@@ -63,33 +66,58 @@ fun HomeScreen(viewModel: MqttViewModel, navController: NavController) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
 
-                // ⬅️ TEXTO NO CANTO SUPERIOR ESQUERDO
-                Column {
-                    Text(
-                        text = topic,
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                }
+                // ⬅️ Tópico à esquerda
+                Text(
+                    text = topic ?: "",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(end = 8.dp)
+                        .clickable {
+                            editTopicInput = topic ?: "" // Preenche com o tópico atual ao abrir
+                            showEditModal = true
+                        }
+                )
 
-                // ➡️ BOTÃO NO CANTO SUPERIOR DIREITO
-                IconButton(
-                    onClick = { navController.navigate("scanner") },
-                    colors = IconButtonDefaults.filledIconButtonColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
+                // ➡️ Grupo de botões à direita
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.qr_code_2_24px),
-                        contentDescription = "Trocar QR Code",
-                        modifier = Modifier.size(24.dp)
-                    )
+                    // Botão QR Code (Scanner)
+                    IconButton(
+                        onClick = { navController.navigate("scanner") },
+                        colors = IconButtonDefaults.filledIconButtonColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.qr_code_2_24px),
+                            contentDescription = "Trocar QR Code",
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+
+                    // Botão SAIR (Logout/Clear)
+                    IconButton(
+                        onClick = { viewModel.clearSubscription() }, // Chama a função que limpa o tópico
+                        colors = IconButtonDefaults.filledIconButtonColors(
+                            containerColor = MaterialTheme.colorScheme.errorContainer,
+                            contentColor = MaterialTheme.colorScheme.onErrorContainer
+                        )
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.logout_24px), // Certifique-se de ter um ícone de logout ou close
+                            contentDescription = "Sair da Subscrição",
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
                 }
             }
         }
 
-        // 📄 CONTEÚDO PRINCIPAL
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -99,18 +127,60 @@ fun HomeScreen(viewModel: MqttViewModel, navController: NavController) {
         ) {
 
             if (topic == null) {
+                // Estado para o input manual de tópico
+                var manualTopicInput by remember { mutableStateOf("") }
+
                 Text(
-                    text = "Nenhum dispenser conectado",
+                    text = "Configurar Dispenser",
                     style = MaterialTheme.typography.headlineSmall
                 )
 
-                Text("Escaneie o QR Code localizado no dispenser para começar.")
+                Text("Conecte-se escaneando o QR Code ou digitando o tópico manualmente.")
 
+                // --- OPÇÃO 1: ESCANEAR ---
                 Button(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = { navController.navigate("scanner") }
                 ) {
+                    Icon(painterResource(id = R.drawable.qr_code_2_24px), contentDescription = null)
+                    Spacer(Modifier.size(8.dp))
                     Text("Escanear QR Code")
+                }
+
+                Text(
+                    text = "ou digite o tópico",
+                    style = MaterialTheme.typography.labelMedium,
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                )
+
+                // --- OPÇÃO 2: DIGITAR ---
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    OutlinedTextField(
+                        modifier = Modifier.weight(1f),
+                        value = manualTopicInput,
+                        onValueChange = { manualTopicInput = it },
+                        label = { Text("Tópico") },
+                        singleLine = true,
+                        shape = RoundedCornerShape(12.dp)
+                    )
+
+                    Button(
+                        onClick = {
+                            if (manualTopicInput.isNotBlank()) {
+                                viewModel.subscribe(manualTopicInput)
+                            }
+                        },
+                        modifier = Modifier.size(56.dp).padding(top = 4.dp),
+                        shape = CircleShape,
+                        contentPadding = PaddingValues(0.dp)
+                    ) {
+                        // Ícone de seta ou "OK"
+                        Text("Ir")
+                    }
                 }
 
             } else {
@@ -331,5 +401,41 @@ fun HomeScreen(viewModel: MqttViewModel, navController: NavController) {
                 }
             }
         }
+    }
+    if (showEditModal) {
+        AlertDialog(
+            onDismissRequest = { showEditModal = false },
+            title = { Text("Editar Tópico") },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text("Digite o novo tópico para conexão:")
+                    OutlinedTextField(
+                        value = editTopicInput,
+                        onValueChange = { editTopicInput = it },
+                        label = { Text("Tópico") },
+                        singleLine = true,
+                        shape = RoundedCornerShape(12.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        if (editTopicInput.isNotBlank()) {
+                            viewModel.subscribe(editTopicInput)
+                            showEditModal = false
+                        }
+                    }
+                ) {
+                    Text("Conectar")
+                }
+            },
+            dismissButton = {
+                OutlinedButton(onClick = { showEditModal = false }) {
+                    Text("Cancelar")
+                }
+            }
+        )
     }
 }

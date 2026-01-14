@@ -1,38 +1,32 @@
 package com.smartchip.aidrink.android.ui.navigation
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.outlined.FavoriteBorder
-import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.Star
-import androidx.compose.ui.graphics.vector.ImageVector
+
+import com.smartchip.aidrink.android.R
 
 sealed class BottomNavItem(
     val route: String,
     val label: String,
-    val selectedIcon: ImageVector,
-    val unselectedIcon: ImageVector
+    val selectedIcon: Int,   // Alterado para Int
+    val unselectedIcon: Int  // Alterado para Int
 ) {
-    object Home : BottomNavItem(
+    object Config : BottomNavItem(
         route = "home",
-        label = "Home",
-        selectedIcon = Icons.Filled.Home,
-        unselectedIcon = Icons.Outlined.Home
+        label = "Config",
+        selectedIcon = R.drawable.handyman_24px,
+        unselectedIcon = R.drawable.handyman_24px
     )
 
-    object Favorites : BottomNavItem(
+    object Serve : BottomNavItem(
         route = "home2",
-        label = "home2",
-        selectedIcon = Icons.Filled.Home,
-        unselectedIcon = Icons.Outlined.Home
+        label = "Serve",
+        selectedIcon = R.drawable.water_full_24px,
+        unselectedIcon = R.drawable.water_full_24px
     )
 
-    object Star : BottomNavItem(
+    object Message : BottomNavItem(
         route = "messages",
         label = "messages",
-        selectedIcon = Icons.Filled.Home,
-        unselectedIcon = Icons.Outlined.Home
+        selectedIcon = R.drawable.chat_24px,
+        unselectedIcon = R.drawable.chat_24px
     )
 }

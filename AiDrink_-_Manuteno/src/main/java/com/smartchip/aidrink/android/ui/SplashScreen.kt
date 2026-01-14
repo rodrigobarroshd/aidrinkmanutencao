@@ -14,7 +14,6 @@ import androidx.navigation.NavController
 import com.smartchip.aidrink.android.mqtt.MqttViewModel
 import com.smartchip.aidrink.android.ui.navigation.Routes
 
-
 @Composable
 fun SplashScreen(
     navController: NavController,
@@ -24,15 +23,13 @@ fun SplashScreen(
         if (viewModel.isReady && !viewModel.hasNavigated) {
             viewModel.hasNavigated = true
 
-            val route = if (viewModel.currentTopic != null) {
-                // subscribe antes de ir para Home
-                viewModel.subscribe(viewModel.currentTopic!!)
-                Routes.HOME
-            } else {
-                Routes.SCANNER
+            // Se existe tópico, faz o subscribe.
+            // Mas independente de ter tópico ou não, vamos para HOME.
+            viewModel.currentTopic?.let {
+                viewModel.subscribe(it)
             }
 
-            navController.navigate(route) {
+            navController.navigate(Routes.HOME) {
                 popUpTo(Routes.SPLASH) { inclusive = true }
                 launchSingleTop = true
             }
@@ -46,6 +43,39 @@ fun SplashScreen(
         CircularProgressIndicator()
     }
 }
+
+//
+//@Composable
+//fun SplashScreen(
+//    navController: NavController,
+//    viewModel: MqttViewModel
+//) {
+//    LaunchedEffect(viewModel.isReady) {
+//        if (viewModel.isReady && !viewModel.hasNavigated) {
+//            viewModel.hasNavigated = true
+//
+//            val route = if (viewModel.currentTopic != null) {
+//                // subscribe antes de ir para Home
+//                viewModel.subscribe(viewModel.currentTopic!!)
+//                Routes.HOME
+//            } else {
+//                Routes.SCANNER
+//            }
+//
+//            navController.navigate(route) {
+//                popUpTo(Routes.SPLASH) { inclusive = true }
+//                launchSingleTop = true
+//            }
+//        }
+//    }
+//
+//    Box(
+//        modifier = Modifier.fillMaxSize(),
+//        contentAlignment = Alignment.Center
+//    ) {
+//        CircularProgressIndicator()
+//    }
+//}
 
 //@Composable
 //fun SplashScreen(

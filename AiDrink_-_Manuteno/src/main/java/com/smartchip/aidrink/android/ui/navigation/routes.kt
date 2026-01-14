@@ -5,4 +5,5 @@ object Routes {
     const val HOME = "home"
     const val SCANNER = "scanner"
     const val MESSAGES = "messages"
+    const val SERVE = "serve"
 }

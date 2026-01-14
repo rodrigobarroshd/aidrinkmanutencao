@@ -4,6 +4,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -18,6 +20,7 @@ import androidx.navigation.compose.rememberNavController
 import com.smartchip.aidrink.android.mqtt.MqttViewModel
 import com.smartchip.aidrink.android.qrcode.QrScannerScreen
 import com.smartchip.aidrink.android.ui.HomeScreen
+import com.smartchip.aidrink.android.ui.ServeScreen
 import com.smartchip.aidrink.android.ui.SplashScreen
 import com.smartchip.aidrink.android.ui.navigation.BottomBar
 import com.smartchip.aidrink.android.ui.navigation.MqttMessagesScreen
@@ -32,47 +35,51 @@ fun MainApp(viewModel: MqttViewModel) {
 
     Scaffold(
         bottomBar = {
-            // Esconde BottomBar no scanner
-            if (currentRoute != "scanner") {
+            val hideBottomBar =
+                currentRoute == Routes.SPLASH ||
+                        currentRoute == Routes.SCANNER ||
+                        viewModel.currentTopic == null   // 👈 AQUI
+
+            if (!hideBottomBar) {
                 BottomBar(navController = navController)
             }
         }
-    ) { innerPadding ->
+    )  { innerPadding ->
         Surface(
             modifier = Modifier.padding(innerPadding),
             color = MaterialTheme.colorScheme.background
         ) {
-//            NavHost(
-//                navController = navController,
-//                startDestination = "splash"
-//            ) {
-//                composable("home") {
-//                    HomeScreen(viewModel, navController)
-//                }
-//
-//                composable("home2") {
-//                    // Exemplo de nova tela
-//                }
-//
-//                composable("messages") {
-//                    MqttMessagesScreen(
-//                        viewModel = viewModel,
-//                        navController = navController
-//                    )
-//                }
-//
-//                composable("scanner") {
-//                    QrScannerScreen(
-//                        viewModel = viewModel,
-//                        onScan = { scannedTopic ->
-//                            navController.navigate("home") {
-//                                popUpTo("home") { inclusive = true }
-//                            }
-//                        }
-//                    )
             NavHost(
                 navController = navController,
-                startDestination = Routes.SPLASH
+                startDestination = Routes.SPLASH,enterTransition = {
+                    slideIntoContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                        animationSpec = tween(400)
+                    )
+                },
+                // A tela atual sai para a DIREITA
+                exitTransition = {
+                    slideOutOfContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                        animationSpec = tween(400)
+                    )
+                },
+
+                // --- AO VOLTAR (Ex: Serve -> Home) ---
+                // A tela anterior volta vindo da direita para a ESQUERDA
+                popEnterTransition = {
+                    slideIntoContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                        animationSpec = tween(400)
+                    )
+                },
+                // A tela atual sai para a ESQUERDA
+                popExitTransition = {
+                    slideOutOfContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                        animationSpec = tween(400)
+                    )
+                }
             ) {
 
                 composable(Routes.SPLASH) {
@@ -98,6 +105,9 @@ fun MainApp(viewModel: MqttViewModel) {
                         viewModel = viewModel,
                         navController = navController
                     )
+                }
+                composable(Routes.SERVE) {
+                    ServeScreen(viewModel, navController)
                 }
                 composable(Routes.MESSAGES) {  // ⚠️ adicionado
                     MqttMessagesScreen(viewModel = viewModel, navController = navController)

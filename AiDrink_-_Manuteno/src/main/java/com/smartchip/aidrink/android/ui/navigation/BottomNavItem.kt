@@ -17,7 +17,7 @@ sealed class BottomNavItem(
     )
 
     object Serve : BottomNavItem(
-        route = "home2",
+        route = "serve",
         label = "Serve",
         selectedIcon = R.drawable.water_full_24px,
         unselectedIcon = R.drawable.water_full_24px

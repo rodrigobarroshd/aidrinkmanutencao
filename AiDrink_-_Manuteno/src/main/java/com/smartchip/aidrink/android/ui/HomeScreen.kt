@@ -227,11 +227,11 @@ fun HomeScreen(viewModel: MqttViewModel, navController: NavController) {
                     // Botão SET Redondo
                     Button(
                         onClick = {
-                            pressureInput.toIntOrNull()?.let {
+                            pressureInput.toFloatOrNull()?.let { pressure ->
                                 viewModel.sendCommand(
                                     CommandFactory.setPressure(
                                         coupler = selectedCoupler,
-                                        pressureCoupler = it
+                                        pressureCoupler = pressure
                                     )
                                 )
                             }
@@ -281,11 +281,11 @@ fun HomeScreen(viewModel: MqttViewModel, navController: NavController) {
                     // Botão Set (Redondo)
                     Button(
                         onClick = {
-                            pulseInput.toIntOrNull()?.let {
+                            pulseInput.toFloatOrNull()?.let { pulse ->
                                 viewModel.sendCommand(
                                     CommandFactory.setCalibratePulse(
                                         coupler = selectedCoupler,
-                                        pulse = it
+                                        pulse = pulse
                                     )
                                 )
                             }

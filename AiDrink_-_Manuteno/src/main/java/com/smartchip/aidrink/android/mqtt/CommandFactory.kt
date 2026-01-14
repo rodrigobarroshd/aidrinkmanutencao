@@ -30,8 +30,35 @@ object CommandFactory {
         coupler = coupler
     )
 
+    fun setPressure(
+        coupler: Int,
+        pressureCoupler: Int
+    ) = MqttPayload(
+        command = "setPressure",
+        coupler = coupler,
+        pressure_coupler = pressureCoupler
+    )
+
     fun getCalibratePulse(coupler: Int) = MqttPayload(
         command = "getCalibratePulse",
         coupler = coupler
+    )
+
+    fun setCalibratePulse(
+        coupler: Int,
+        pulse: Int
+    ) = MqttPayload(
+        command = "setCalibratePulse",
+        coupler = coupler,
+        pulse = pulse
+    )
+
+    fun setFreezerDown(
+        hour: Int,
+        duration: Int
+    ) = MqttPayload(
+        command = "setFreezerDown",
+        hour = hour,
+        duration = duration
     )
 }

@@ -30,8 +30,8 @@ sealed class BottomNavItem(
     )
 
     object Star : BottomNavItem(
-        route = "home3",
-        label = "home3",
+        route = "messages",
+        label = "messages",
         selectedIcon = Icons.Filled.Home,
         unselectedIcon = Icons.Outlined.Home
     )

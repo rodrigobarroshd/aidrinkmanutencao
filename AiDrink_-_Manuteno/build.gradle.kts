@@ -52,7 +52,10 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore:26.0.2")
     debugImplementation(libs.compose.ui.tooling)
     implementation("androidx.localbroadcastmanager:localbroadcastmanager:1.1.0")
-
+    // Lifecycle ViewModel + viewModelScope
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.6")
+    implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.8.6")
+    implementation ("androidx.datastore:datastore-preferences:1.1.1")
     // CameraX
     implementation("androidx.camera:camera-core:1.3.0")
     implementation("androidx.camera:camera-camera2:1.3.0")
@@ -61,7 +64,8 @@ dependencies {
     implementation("com.google.guava:guava:31.1-android")
     // ML Kit Barcode
     implementation("com.google.mlkit:barcode-scanning:17.2.0")
-
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
 //    mqtt connection
     implementation("com.hivemq:hivemq-mqtt-client:1.3.3")
     implementation("com.rabbitmq:amqp-client:5.16.0")

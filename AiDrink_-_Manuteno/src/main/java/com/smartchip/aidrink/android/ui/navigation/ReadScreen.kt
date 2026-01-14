@@ -51,21 +51,7 @@ fun MqttMessagesScreen(
     val topic = viewModel.currentTopic
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text("Mensagens MQTT")
-                },
-                navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(
-                            imageVector = Icons.Filled.ArrowBack,
-                            contentDescription = "Voltar"
-                        )
-                    }
-                }
-            )
-        }
+
     ) { padding ->
 
         if (messages.isEmpty()) {

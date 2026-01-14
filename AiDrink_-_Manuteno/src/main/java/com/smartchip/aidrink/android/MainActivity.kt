@@ -18,8 +18,10 @@ import androidx.navigation.compose.rememberNavController
 import com.smartchip.aidrink.android.mqtt.MqttViewModel
 import com.smartchip.aidrink.android.qrcode.QrScannerScreen
 import com.smartchip.aidrink.android.ui.HomeScreen
+import com.smartchip.aidrink.android.ui.SplashScreen
 import com.smartchip.aidrink.android.ui.navigation.BottomBar
 import com.smartchip.aidrink.android.ui.navigation.MqttMessagesScreen
+import com.smartchip.aidrink.android.ui.navigation.Routes
 
 @Composable
 fun MainApp(viewModel: MqttViewModel) {
@@ -40,36 +42,69 @@ fun MainApp(viewModel: MqttViewModel) {
             modifier = Modifier.padding(innerPadding),
             color = MaterialTheme.colorScheme.background
         ) {
+//            NavHost(
+//                navController = navController,
+//                startDestination = "splash"
+//            ) {
+//                composable("home") {
+//                    HomeScreen(viewModel, navController)
+//                }
+//
+//                composable("home2") {
+//                    // Exemplo de nova tela
+//                }
+//
+//                composable("messages") {
+//                    MqttMessagesScreen(
+//                        viewModel = viewModel,
+//                        navController = navController
+//                    )
+//                }
+//
+//                composable("scanner") {
+//                    QrScannerScreen(
+//                        viewModel = viewModel,
+//                        onScan = { scannedTopic ->
+//                            navController.navigate("home") {
+//                                popUpTo("home") { inclusive = true }
+//                            }
+//                        }
+//                    )
             NavHost(
                 navController = navController,
-                startDestination = "home"
+                startDestination = Routes.SPLASH
             ) {
-                composable("home") {
-                    HomeScreen(viewModel, navController)
+
+                composable(Routes.SPLASH) {
+                    SplashScreen(navController, viewModel)
                 }
 
-                composable("home2") {
-                    // Exemplo de nova tela
-                }
-
-                composable("home3") {
-                    MqttMessagesScreen(
-                        viewModel = viewModel,
-                        navController = navController
-                    )
-                }
-
-                composable("scanner") {
+                composable(Routes.SCANNER) {
                     QrScannerScreen(
                         viewModel = viewModel,
-                        onScan = { scannedTopic ->
-                            navController.navigate("home") {
-                                popUpTo("home") { inclusive = true }
+                        onScan = { topic ->
+                            viewModel.subscribe(topic)
+                            navController.navigate(Routes.HOME) {
+                                popUpTo(Routes.SCANNER) { inclusive = true }
                             }
                         }
                     )
                 }
+
+
+
+                composable(Routes.HOME) {
+                    HomeScreen(
+                        viewModel = viewModel,
+                        navController = navController
+                    )
+                }
+                composable(Routes.MESSAGES) {  // ⚠️ adicionado
+                    MqttMessagesScreen(viewModel = viewModel, navController = navController)
+                }
             }
+
+
         }
     }
 }

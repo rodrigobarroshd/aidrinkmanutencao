@@ -20,25 +20,28 @@ fun DashboardScreen(viewModel: MqttViewModel) {
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
 
-        Button(onClick = {
-            viewModel.sendCommand(gson.toJson(CommandFactory.unlock()))
-        }) {
-            Text("Unlock")
-        }
-
-        Button(onClick = {
-            viewModel.sendCommand(gson.toJson(CommandFactory.dispenserCup()))
-        }) {
-            Text("Dispenser Cup")
+        Button(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = { viewModel.sendCommand(CommandFactory.unlock())}
+        ) {
+            Text("Unlock (Abrir)")
         }
 
         Button(
-            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
-            onClick = {
-                viewModel.sendCommand(gson.toJson(CommandFactory.reboot()))
-            }
+            modifier = Modifier.fillMaxWidth(),
+            onClick = { viewModel.sendCommand(CommandFactory.dispenserCup())}
         ) {
-            Text("Reboot")
+            Text("Dispenser Cup (Copo)")
+        }
+
+        Button(
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.error
+            ),
+            onClick = { viewModel.sendCommand(CommandFactory.reboot())}
+        ) {
+            Text("Reboot (Reiniciar)")
         }
     }
 }

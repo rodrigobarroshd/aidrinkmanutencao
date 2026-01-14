@@ -95,12 +95,13 @@ class MqttViewModel(
         }
     }
 
-    fun sendCommand(command: String) {
-        currentTopic?.let {
-            mqttManager.publish(it, command)
+    fun sendCommand(payload: MqttPayload) {
+        currentTopic?.let { topic ->
+            mqttManager.publish(topic, payload)
         }
     }
 }
+
 
 //class MqttViewModel : ViewModel() {
 //

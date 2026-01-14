@@ -1,6 +1,7 @@
 package com.smartchip.aidrink.android.mqtt
 
 import android.content.Context
+import com.google.gson.Gson
 
 import com.hivemq.client.mqtt.MqttClient
 import com.hivemq.client.mqtt.MqttGlobalPublishFilter
@@ -11,6 +12,7 @@ import com.hivemq.client.mqtt.mqtt3.message.publish.Mqtt3Publish
 
 class MqttManager {
 
+    private val gson = Gson()
     private val client = MqttClient.builder()
         .useMqttVersion3()
         .identifier("android-client")
@@ -46,10 +48,12 @@ class MqttManager {
             .send()
     }
 
-    fun publish(topic: String, message: String) {
+    fun publish(topic: String, payload: MqttPayload) {
+        val json = gson.toJson(payload)
+
         client.publishWith()
             .topic(topic)
-            .payload(message.toByteArray())
+            .payload(json.toByteArray())
             .send()
     }
 }
